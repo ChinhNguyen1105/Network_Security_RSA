@@ -1,0 +1,16 @@
+D:\An ninh mangj\code\RSA_System\UI_CSharp\bin\Debug\net8.0-windows\UI_CSharp.exe
+D:\An ninh mangj\code\RSA_System\UI_CSharp\bin\Debug\net8.0-windows\UI_CSharp.deps.json
+D:\An ninh mangj\code\RSA_System\UI_CSharp\bin\Debug\net8.0-windows\UI_CSharp.runtimeconfig.json
+D:\An ninh mangj\code\RSA_System\UI_CSharp\bin\Debug\net8.0-windows\UI_CSharp.dll
+D:\An ninh mangj\code\RSA_System\UI_CSharp\bin\Debug\net8.0-windows\UI_CSharp.pdb
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.Form1.resources
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.csproj.GenerateResource.cache
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.GeneratedMSBuildEditorConfig.editorconfig
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.AssemblyInfoInputs.cache
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.AssemblyInfo.cs
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.csproj.CoreCompileInputs.cache
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.dll
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\refint\UI_CSharp.dll
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.pdb
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.genruntimeconfig.cache
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\ref\UI_CSharp.dll

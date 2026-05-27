@@ -1,0 +1,20 @@
+﻿  pch.cpp
+  dllmain.cpp
+D:\An ninh mangj\code\CPP\CPP\dllmain.cpp(29,17): warning C4190: 'Base64Encode' has C-linkage specified, but returns 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+D:\An ninh mangj\code\CPP\CPP\dllmain.cpp(54,17): warning C4190: 'Base64Decode' has C-linkage specified, but returns 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+D:\An ninh mangj\code\CPP\CPP\dllmain.cpp(74,17): warning C4190: 'BN_To_Base64' has C-linkage specified, but returns 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+D:\An ninh mangj\code\CPP\CPP\dllmain.cpp(92,17): warning C4190: 'GetXmlTagValue' has C-linkage specified, but returns 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(541,7):
+      see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  
+     Creating library D:\An ninh mangj\code\CPP\x64\Debug\CPP.lib and object D:\An ninh mangj\code\CPP\x64\Debug\CPP.exp
+  CPP.vcxproj -> D:\An ninh mangj\code\CPP\x64\Debug\CPP.dll
