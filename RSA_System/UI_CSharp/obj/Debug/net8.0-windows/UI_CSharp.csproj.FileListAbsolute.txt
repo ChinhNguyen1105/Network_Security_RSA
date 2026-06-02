@@ -9,6 +9,7 @@ D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.Ge
 D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.AssemblyInfoInputs.cache
 D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.AssemblyInfo.cs
 D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.csproj.CoreCompileInputs.cache
+D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.sourcelink.json
 D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.dll
 D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\refint\UI_CSharp.dll
 D:\An ninh mangj\code\RSA_System\UI_CSharp\obj\Debug\net8.0-windows\UI_CSharp.pdb

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,217 +8,152 @@ namespace UI_CSharp
 {
     public class RSAService
     {
+        private const string DLL_PATH = "RSA_Core.dll";
+
+        // =====================================================
+        // IMPORT C++ DLL FUNCTIONS (Sử dụng IntPtr để quản lý bộ nhớ tuyệt đối an toàn)
+        // =====================================================
+        [DllImport(DLL_PATH, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private static extern IntPtr GenerateKeyPair_CPP(int keySize, bool getPrivateKey);
+
+        [DllImport(DLL_PATH, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private static extern IntPtr SignData_CPP(string text, string xmlPrivKey);
+
+        [DllImport(DLL_PATH, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private static extern bool VerifyData_CPP(string text, string signature, string xmlPubKey);
+
+        [DllImport(DLL_PATH, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private static extern IntPtr SignFile_CPP(string filePath, string xmlPrivKey);
+
+        [DllImport(DLL_PATH, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private static extern bool VerifyFile_CPP(string filePath, string signature, string xmlPubKey);
+
+        // Helper chuyển đổi vùng nhớ IntPtr từ CoTaskMemAlloc thành string và giải phóng nó
+        private string MarshalPointerToString(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero) return string.Empty;
+            try
+            {
+                string str = Marshal.PtrToStringAnsi(ptr);
+                return str;
+            }
+            finally
+            {
+                // Giải phóng chính xác vùng nhớ CoTaskMemAlloc được cấp từ C++
+                Marshal.FreeCoTaskMem(ptr);
+            }
+        }
+
         public string XmlPublicKey { get; set; }
-
         public string XmlPrivateKey { get; set; }
-
-        public string SelectedModule { get; set; }
+        public string SelectedModule { get; set; } = "CSharp";
 
         // =====================================================
         // GENERATE KEY
         // =====================================================
-
         public void GenerateKeyPair(int keySize)
         {
-            using (RSA rsa = RSA.Create(keySize))
+            if (SelectedModule == "OpenSSL")
             {
-                XmlPublicKey = rsa.ToXmlString(false);
+                IntPtr pubPtr = GenerateKeyPair_CPP(keySize, false);
+                XmlPublicKey = MarshalPointerToString(pubPtr);
 
-                XmlPrivateKey = rsa.ToXmlString(true);
+                IntPtr privPtr = GenerateKeyPair_CPP(keySize, true);
+                XmlPrivateKey = MarshalPointerToString(privPtr);
             }
-        }
-
-        // =====================================================
-        // ENCRYPT TEXT
-        // =====================================================
-
-        public string Encrypt(string plainText)
-        {
-            byte[] data =
-                Encoding.UTF8.GetBytes(plainText);
-
-            using (RSA rsa = RSA.Create())
+            else
             {
-                rsa.FromXmlString(XmlPublicKey);
-
-                byte[] encrypted =
-                    rsa.Encrypt(
-                        data,
-                        RSAEncryptionPadding.Pkcs1);
-
-                return Convert.ToBase64String(encrypted);
-            }
-        }
-
-        // =====================================================
-        // DECRYPT TEXT
-        // =====================================================
-
-        public string Decrypt(string cipherText)
-        {
-            byte[] data =
-                Convert.FromBase64String(cipherText);
-
-            using (RSA rsa = RSA.Create())
-            {
-                rsa.FromXmlString(XmlPrivateKey);
-
-                byte[] decrypted =
-                    rsa.Decrypt(
-                        data,
-                        RSAEncryptionPadding.Pkcs1);
-
-                return Encoding.UTF8.GetString(decrypted);
+                using (RSA rsa = RSA.Create(keySize))
+                {
+                    XmlPublicKey = rsa.ToXmlString(false);
+                    XmlPrivateKey = rsa.ToXmlString(true);
+                }
             }
         }
 
         // =====================================================
         // SIGN TEXT
         // =====================================================
-
         public string SignData(string text)
         {
-            byte[] data =
-                Encoding.UTF8.GetBytes(text);
-
-            using (RSA rsa = RSA.Create())
+            if (SelectedModule == "OpenSSL")
             {
-                rsa.FromXmlString(XmlPrivateKey);
-
-                byte[] signature =
-                    rsa.SignData(
-                        data,
-                        HashAlgorithmName.SHA256,
-                        RSASignaturePadding.Pkcs1);
-
-                return Convert.ToBase64String(signature);
+                IntPtr sigPtr = SignData_CPP(text, XmlPrivateKey);
+                return MarshalPointerToString(sigPtr);
+            }
+            else
+            {
+                byte[] data = Encoding.UTF8.GetBytes(text);
+                using (RSA rsa = RSA.Create())
+                {
+                    rsa.FromXmlString(XmlPrivateKey);
+                    byte[] signature = rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    return Convert.ToBase64String(signature);
+                }
             }
         }
 
         // =====================================================
         // VERIFY TEXT
         // =====================================================
-
-        public bool VerifyData(
-            string text,
-            string signature)
+        public bool VerifyData(string text, string signature)
         {
-            byte[] data =
-                Encoding.UTF8.GetBytes(text);
-
-            byte[] sigBytes =
-                Convert.FromBase64String(signature);
-
-            using (RSA rsa = RSA.Create())
+            if (SelectedModule == "OpenSSL")
             {
-                rsa.FromXmlString(XmlPublicKey);
-
-                return rsa.VerifyData(
-                    data,
-                    sigBytes,
-                    HashAlgorithmName.SHA256,
-                    RSASignaturePadding.Pkcs1);
+                return VerifyData_CPP(text, signature, XmlPublicKey);
             }
-        }
-
-        // =====================================================
-        // ENCRYPT FILE
-        // =====================================================
-
-        public void EncryptFile(
-            string inputFile,
-            string outputFile)
-        {
-            byte[] fileData =
-                File.ReadAllBytes(inputFile);
-
-            using (RSA rsa = RSA.Create())
+            else
             {
-                rsa.FromXmlString(XmlPublicKey);
-
-                byte[] encryptedData =
-                    rsa.Encrypt(
-                        fileData,
-                        RSAEncryptionPadding.Pkcs1);
-
-                File.WriteAllBytes(
-                    outputFile,
-                    encryptedData);
-            }
-        }
-
-        // =====================================================
-        // DECRYPT FILE
-        // =====================================================
-
-        public void DecryptFile(
-            string inputFile,
-            string outputFile)
-        {
-            byte[] encryptedData =
-                File.ReadAllBytes(inputFile);
-
-            using (RSA rsa = RSA.Create())
-            {
-                rsa.FromXmlString(XmlPrivateKey);
-
-                byte[] decryptedData =
-                    rsa.Decrypt(
-                        encryptedData,
-                        RSAEncryptionPadding.Pkcs1);
-
-                File.WriteAllBytes(
-                    outputFile,
-                    decryptedData);
+                byte[] data = Encoding.UTF8.GetBytes(text);
+                byte[] sigBytes = Convert.FromBase64String(signature);
+                using (RSA rsa = RSA.Create())
+                {
+                    rsa.FromXmlString(XmlPublicKey);
+                    return rsa.VerifyData(data, sigBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                }
             }
         }
 
         // =====================================================
         // SIGN FILE
         // =====================================================
-
         public string SignFile(string filePath)
         {
-            byte[] fileData =
-                File.ReadAllBytes(filePath);
-
-            using (RSA rsa = RSA.Create())
+            if (SelectedModule == "OpenSSL")
             {
-                rsa.FromXmlString(XmlPrivateKey);
-
-                byte[] signature =
-                    rsa.SignData(
-                        fileData,
-                        HashAlgorithmName.SHA256,
-                        RSASignaturePadding.Pkcs1);
-
-                return Convert.ToBase64String(signature);
+                IntPtr sigPtr = SignFile_CPP(filePath, XmlPrivateKey);
+                return MarshalPointerToString(sigPtr);
+            }
+            else
+            {
+                byte[] fileData = File.ReadAllBytes(filePath);
+                using (RSA rsa = RSA.Create())
+                {
+                    rsa.FromXmlString(XmlPrivateKey);
+                    byte[] signature = rsa.SignData(fileData, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    return Convert.ToBase64String(signature);
+                }
             }
         }
 
         // =====================================================
         // VERIFY FILE
         // =====================================================
-
-        public bool VerifyFile(
-            string filePath,
-            string signature)
+        public bool VerifyFile(string filePath, string signature)
         {
-            byte[] fileData =
-                File.ReadAllBytes(filePath);
-
-            byte[] sigBytes =
-                Convert.FromBase64String(signature);
-
-            using (RSA rsa = RSA.Create())
+            if (SelectedModule == "OpenSSL")
             {
-                rsa.FromXmlString(XmlPublicKey);
-
-                return rsa.VerifyData(
-                    fileData,
-                    sigBytes,
-                    HashAlgorithmName.SHA256,
-                    RSASignaturePadding.Pkcs1);
+                return VerifyFile_CPP(filePath, signature, XmlPublicKey);
+            }
+            else
+            {
+                byte[] fileData = File.ReadAllBytes(filePath);
+                byte[] sigBytes = Convert.FromBase64String(signature);
+                using (RSA rsa = RSA.Create())
+                {
+                    rsa.FromXmlString(XmlPublicKey);
+                    return rsa.VerifyData(fileData, sigBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                }
             }
         }
     }

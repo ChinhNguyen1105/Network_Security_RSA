@@ -543,19 +543,29 @@ namespace UI_CSharp
         // MODULE CHANGE
         // =========================================================
 
-        private void CbModuleSelect_SelectedIndexChanged(
-            object sender,
-            EventArgs e)
-        {
-            _rsaService.SelectedModule =
-                cbModuleSelect.SelectedItem.ToString();
+        // =========================================================
+        // MODULE CHANGE
+        // =========================================================
 
+        private void CbModuleSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Ánh xạ từ text hiển thị trên UI sang giá trị định danh xử lý của Service
+            if (cbModuleSelect.SelectedItem.ToString() == "C++ (Custom Core)")
+            {
+                _rsaService.SelectedModule = "OpenSSL";
+            }
+            else
+            {
+                _rsaService.SelectedModule = "CSharp";
+            }
+
+            // Xóa trắng các ô chứa key cũ để tránh nhầm lẫn giữa 2 core xử lý
             txtPublicKey.Clear();
             txtPrivateKey.Clear();
+            _rsaService.XmlPublicKey = null;
+            _rsaService.XmlPrivateKey = null;
 
-            UpdateStatus(
-                $"● Đã chuyển sang: {_rsaService.SelectedModule}",
-                BrandOrange);
+            UpdateStatus($"● Đã chuyển sang Engine: {_rsaService.SelectedModule}", BrandOrange);
         }
 
         // =========================================================
